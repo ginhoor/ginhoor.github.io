@@ -1,0 +1,67 @@
+NSURLSession工作流程
+
+
+NSURLSessionDataTask 发起一个POST HTTP请求
+
+创建一个NSURLSession，配置NSURLSession的缓存策略，Cookie，身份验证策略，基础请求Header，关联delegate处理session级别的回调等
+如Session即将结束，收到身份验证挑战，后台请求任务完成的回调。
+
+创建request，配置请求url，header，body，设置请求方式为POST。
+创建一个DataTask，关联delegate处理响应数据。
+
+如网络等待，身份挑战，数据接收进度，任务完成等回调。
+
+然后唤醒DataTask开始任务。
+结束后关闭session。
+
+NSURLSessionStreamTask工作流程
+Stream为双向通信，接收数据的同时也可以发送数据。
+
+NSURLSessionDownloadTask断点续传过程
+当任务中断的时候，可以从error的info中获得resumeData。
+当下次新建任务的时候通过resumeData初始化，就可以进行断点续传。
+
+后台下载功能
+在project中开启后台下载权限
+初始化用于后台下载的Session，并获得唯一标识符
+当任务完成后会回调AppDelegate的后台任务完成，也会回调Session的任务完成会回调
+
+NSURLCache运作
+只能缓存get请求，可以设置缓存大小，缓存策略。
+
+当request成功获得响应后，response会被存入hash表，关联key为request的内存地址。
+当request再次请求时，会先发起请求验证response的数据是否有效，如果有效则直接返回缓存，如果过期则发起新的请求。
+不同的缓存策略会有不同的效果。
+
+NSURLProtocol
+可以注册为全局生效，或者关联的Session
+可以使用请求发起，获得响应，获得数据，加载完成，加载失败，身份挑战等回调。
+已处理过的Request需要标记为已完成，防止重复执行
+
+
+AFNetworking工作流程
+
+发起一个POST HTTPS请求
+创建一个HTTPSessionManager，配置BaseURL
+配置Request Serialization，Response Serialization
+调用Request Serialization来创建Request，配置Request的URL，将Params解析成NSData后存入Body。
+创建一个DataTask，并未DataTask创建一个独立的delegate，并缓存起来。
+当请求遇到身份挑战的时候，Task的delegate会处理身份挑战，如果是公钥验证，则从证书中获取公钥并与本地校验，通过则回传服务端；如果是证书验证，则先验证证书域名和有效期，成功后将本地证书信息加入到服务端证书中，回传服务端；也可以拒绝响应或取消挑战。
+当获取到服务端响应时，Response Serialization将先验证域名和状态码，通过后根据设置的不同Serialization来格式化响应数据供开发人员使用。
+
+
+
+SDWebImageManager 获取图片
+先查询当前URL是否已经尝试失败过，如果没有设置失败后尝试，则结束
+检测内存缓存是否有对应url的缓存，再检测磁盘是否有对应url的缓存，如果有则返回
+如果没有缓存则创建任务开始下载
+如果设置了渐进式显示，则在每次获得数据是都会生成图片并返回
+如果请求失败了，则url会被记录到失败Hash表中。
+下载成功后将图片解压，将图片分别放入内存缓存和磁盘缓存
+
+
+
+
+
+
+HTTPS证书中都包含哪些内容
