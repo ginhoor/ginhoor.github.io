@@ -1,15 +1,11 @@
-<footer>
-  <div class="grid">
-    <div class="unit one-third center-on-mobiles">
-      <p>The contents of this website are <br />&copy;&nbsp;{{ site.time | date: '%Y' }} under the terms of the <a href="{{ site.repository }}/blob/master/LICENSE">MIT&nbsp;License</a>.</p>
-    </div>
-    <div class="unit two-thirds align-right center-on-mobiles">
-      <p>
-        Proudly hosted by
-        <a href="https://github.com">
-          <img src="/img/footer-logo.png" width="100" height="30" alt="GitHub • Social coding">
-        </a>
-      </p>
-    </div>
-  </div>
+<footer class="g-footer">
+  <section>{{ site.title }} ©
+  {% assign current = "now" | date: "%Y" | plus: 0%}
+  {% unless site.footer.since and site.footer.since == current %}
+    {{ site.footer.since }}
+    -
+  {% endunless %}
+  {{ current }}
+  </section>
+  <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
 </footer>

@@ -1,78 +1,80 @@
-# Theme
-#theme               : jekyll-theme-cayman
+# Site settings 配置站点
+title: '邵俊桦的博客'
+description: '技术改变生活，还是生活改变技术？'
+keyword: '邵俊桦, 邵俊桦的独立博客, 邵俊桦的博客, iOS, iOS开发, iOS博客, objective-c, 架构, swift, flutter'
+url: '' # your host
 
-# Where things are
-source              : .
-destination         : ./_site
-collections_dir     : .
-plugins_dir         : _plugins
-layouts_dir         : _layouts
-data_dir            : _data
-includes_dir        : _includes
-collections:
-  posts:
-    output          : true
+# if you don't need baseurl, you should leave this value blank.
+baseurl: ''
 
-# Handling Reading
-safe                : false
-include             : [".htaccess"]
-exclude             : ["Gemfile", "Gemfile.lock", "node_modules", "vendor/bundle/", "vendor/cache/", "vendor/gems/", "vendor/ruby/"]
-keep_files          : [".git", ".svn"]
-encoding            : "utf-8"
-markdown_ext        : "markdown,mkdown,mkdn,mkd,md"
-strict_front_matter : false
+# Navigation links
+nav:
+  home: '/'
+  tags: '/tags.html'
 
-# Filtering Content
-show_drafts         : null
-limit_posts         : 0
-future              : false
-unpublished         : false
+# Footer
+footer:
+  since: 2019
+
+# Author 配置博主信息
+author: '邵俊桦'
+nickname: '大帅'
+bio: '掌控一切之时，<br>成功之路开始！  '
+avatar: '/assets/img/profile.jpg'
+
+# Search
+search: true
+
+# Night mode
+nightMode: true
+
+# Comments 评论功能
+#comments:
+#  disqus: false
+#  disqus_url: 'https://liaokeyu.disqus.com/embed.js'
+
+# MathJax 公式支持 by Ray-Eldath
+mathjax: true
+
+# Share
+social-share: true
+social-share-items: ['wechat', 'weibo', 'douban', 'twitter']
+
+# theme color 主题皮肤
+theme-color: 'default'  # pink or default
+
+# Post header background patterns (when the post no cover): circuitBoard, overlappingCircles, food, glamorous, ticTacToe, seaOfClouds
+postPatterns: 'circuitBoard'
+
+# SNS settings 配置社交网站
+# url: email, weibo, zhihu, twitter, instagram, juejin, github, douban, facebook, dribble, uicn, jianshu, medium, linkedin
+sns:
+#  weibo: '//weibo.com/lovecolcol'
+  juejin: '//juejin.im/user/5c34448bf265da611639f5d5'
+#  instagram: '//www.instagram.com/steveliaocn'
+  github: '//github.com/ginhoor'
+
+# Tags 设置标签
+recommend-tags: true # whether or not display recommend-tags on the sidebar
+recommend-condition-size: 12 # a tag will be recommended if the size of it is more than this value
+
+# Build settings
+paginate: 6
+paginate_path: 'page:num'
+exclude: ['node_modules', 'dev', 'package.json', 'gulpfile.js', '.gitignore', 'README.md']
+
+# Markdown
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+
+# RSS
+RSS: false
+
+# Permalink
+# See: https://github.com/kaeyleo/jekyll-theme-H2O/issues/35
+permalink: /:year/:month/:day/:title.html
 
 # Plugins
-whitelist           : []
-plugins             : []
-
-# Conversion
-markdown            : kramdown
-highlighter         : rouge
-lsi                 : false
-excerpt_separator   : "\n\n"
-incremental         : false
-
-# Serving
-detach              : false
-port                : 4000
-host                : 127.0.0.1
-baseurl             : "" # does not include hostname
-show_dir_listing    : false
-
-# Outputting
-permalink           : date
-paginate_path       : /page:num
-timezone            : null
-
-quiet               : false
-verbose             : false
-defaults            : []
-
-liquid:
-  error_mode        : warn
-  strict_filters    : false
-  strict_variables  : false
-
-# Markdown Processors
-rdiscount:
-  extensions        : []
-
-redcarpet:
-  extensions        : []
-
-kramdown:
-  auto_ids          : true
-  entity_output     : as_char
-  toc_levels        : 1..6
-  smart_quotes      : lsquo,rsquo,ldquo,rdquo
-  input             : GFM
-  hard_wrap         : false
-  footnote_nr       : 1
-  show_warnings     : false
+plugins: [jekyll-paginate]
