@@ -1,7 +1,6 @@
 ---
 layout: post
 title: 'AppDelegate模块化历程'
-subtitle: '根据项目进度逐步实现模块化'
 categories: 技术
 tags: AppDelegate 模块化 组件化
 ---
@@ -22,7 +21,7 @@ AppDelegate控制着App的主要生命周期，比如App初始化完成后构建
 
 创建一个AppDelegate+XXX的Category，比如下面这个AppDelegate+CEReachability
 
-```objc
+```objectivec
 #import "AppDelegate.h"
 
 @interface AppDelegate (CEReachability)
@@ -61,7 +60,7 @@ AppDelegate控制着App的主要生命周期，比如App初始化完成后构建
 
 然后在AppDelegate中注册这个模块
 
-```objc
+```objectivec
 #import "AppDelegate+CEReachability.h"
 
 @implementation AppDelegate
@@ -106,7 +105,7 @@ AppDelegate控制着App的主要生命周期，比如App初始化完成后构建
 
 ApplicationMediator是一个单例，用于管理模块的注册与移除。
 
-```objc
+```objectivec
 @interface CEApplicationMediator : UIResponder<UIApplicationDelegate, UNUserNotificationCenterDelegate>
 
 @property (nonatomic, strong) NSHashTable *applicationModuleDelegates;
@@ -128,7 +127,7 @@ ApplicationMediator是一个单例，用于管理模块的注册与移除。
 
 模块根据需要实现UIApplicationDelegate与UNUserNotificationCenterDelegate就可以加入到UIApplication的生命周期中。
 
-```objc
+```objectivec
 @implementation CEAMWindowDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -150,7 +149,7 @@ ApplicationMediator是一个单例，用于管理模块的注册与移除。
 
 
 
-```objc
+```objectivec
 @implementation CEAMReachabilityDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -184,7 +183,7 @@ ApplicationMediator是一个单例，用于管理模块的注册与移除。
 
 当模块创建完成后，进行注册后即可生效。
 
-```objc
+```objectivec
 @implementation AppDelegate
 + (void)load
 {
@@ -221,7 +220,7 @@ ApplicationMediator是一个单例，用于管理模块的注册与移除。
 
 AppDelegate的所有方法都转由ApplicationMediator处理，模块转发逻辑后面介绍。
 
-```objc
+```objectivec
 @implementation AppDelegate
 
 + (void)load
@@ -251,7 +250,7 @@ AppDelegate的所有方法都转由ApplicationMediator处理，模块转发逻�
 
 #### ApplicationMediator
 
-```objc
+```objectivec
 #pragma mark- Handle Method
 /**
  无法通过[super respondsToSelector:aSelector]来检测对象是否从super继承了方法。
