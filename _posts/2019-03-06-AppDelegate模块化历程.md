@@ -1,10 +1,3 @@
----
-layout: post
-title: 'AppDelegate模块化历程'
-categories: 技术
-tags: AppDelegate 模块化 组件化
----
-
 源码地址： [GHApplicationMediator](https://github.com/ginhoor/GHApplicationMediator)
 
 ## 为什么AppDelegate不容易维护
@@ -303,7 +296,9 @@ AppDelegate的所有方法都转由ApplicationMediator处理，模块转发逻�
             NSUInteger returnValueLenth = anInvocation.methodSignature.methodReturnLength;
             BOOL *retValue = (BOOL *)malloc(returnValueLenth);
             [anInvocation getReturnValue:retValue];
-            return *retValue;
+
+            BOOL result = *retValue;
+            return result;
         }];
     } else {
         // 等同于[self doesNotRecognizeSelector:anInvocation.selector];
@@ -313,29 +308,26 @@ AppDelegate的所有方法都转由ApplicationMediator处理，模块转发逻�
 
 - (BOOL)hasDelegateRespondsToSelector:(SEL)selector
 {
-    BOOL result = NO;
-    NSEnumerator *enumerater = _applicationModuleDelegates.objectEnumerator;
-    id delegate;
-    while ((delegate = enumerater.nextObject)) {
-        result = [delegate respondsToSelector:selector];
-        if (result) {
-            break;
+    __block BOOL result = NO;
+    
+    [self.applicationModuleDelegates enumerateObjectsUsingBlock:^(id  _Nonnull delegate, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([delegate respondsToSelector:selector]) {
+            result = YES;
+            *stop = YES;
         }
-    }
+    }];
     return result;
 }
 
 - (id)delegateRespondsToSelector:(SEL)selector
 {
-    id resultDelegate;
-    NSEnumerator *enumerater = _applicationModuleDelegates.objectEnumerator;
-    id delegate;
-    while ((delegate = enumerater.nextObject)) {
+    __block id resultDelegate;
+    [self.applicationModuleDelegates enumerateObjectsUsingBlock:^(id  _Nonnull delegate, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([delegate respondsToSelector:selector]) {
             resultDelegate = delegate;
-            break;
+            *stop = YES;
         }
-    }
+    }];
     return resultDelegate;
 }
 
@@ -350,16 +342,14 @@ AppDelegate的所有方法都转由ApplicationMediator处理，模块转发逻�
     if (_applicationModuleDelegates.count == 0) {
         return;
     }
-    NSEnumerator *enumerater = _applicationModuleDelegates.objectEnumerator;
     
-    id delegate;
-    while ((delegate = enumerater.nextObject)) {
+    [self.applicationModuleDelegates enumerateObjectsUsingBlock:^(id  _Nonnull delegate, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([delegate respondsToSelector:selector]) {
             if (nofityHandler) {
                 nofityHandler(delegate);
             }
         }
-    }
+    }];
 }
 
 /**
@@ -372,22 +362,20 @@ AppDelegate的所有方法都转由ApplicationMediator处理，模块转发逻�
  */
 - (BOOL)notifySelectorOfAllDelegateUntilSuccessed:(SEL)selector defaultReturnValue:(BOOL)defaultReturnValue nofityHandler:(BOOL(^)(id delegate))nofityHandler
 {
-    BOOL success = defaultReturnValue;
+    __block BOOL success = defaultReturnValue;
     if (_applicationModuleDelegates.count == 0) {
         return success;
     }
-    NSEnumerator *enumerater = _applicationModuleDelegates.objectEnumerator;
-    id delegate;
-    while ((delegate = enumerater.nextObject)) {
+    [self.applicationModuleDelegates enumerateObjectsUsingBlock:^(id  _Nonnull delegate, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([delegate respondsToSelector:selector]) {
             if (nofityHandler) {
                 success = nofityHandler(delegate);
                 if (success) {
-                    break;
+                    *stop = YES;
                 }
             }
         }
-    }
+    }];
     return success;
 }
 ```
@@ -412,6 +400,3 @@ AppDelegate的所有方法都转由ApplicationMediator处理，模块转发逻�
 
 - 比如在AppDelegate中注册模块是根据代码的编写顺序来决定模块之间的依赖关系的，只能是单项依赖。实际使用过程中还是出现过由于依赖模块关系，导致初始化混乱的问题。设计的时候为了减少类继承和协议继承，用的都是系统现有的方案，后续可能会按照责任链的设计思路将这个组件设计的更完善。
 - AppDelegate有一个默认的UIWindow，大量的第三方库都通过`[UIApplication sharedApplication].delegate.window.bounds.size`来获取屏幕尺寸，所以在创建或更改Window的时候，需要牢记将Window赋值给AppDelegate。目前只通过了文档约束，后续还会进行改进。
-
-
-
